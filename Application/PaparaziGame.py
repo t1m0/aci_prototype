@@ -38,7 +38,7 @@ class PaparaziGame:
                 time_elapsed = 1000 * (time.time() - starttime) # time in ms
                 print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {round(time_elapsed,2)}ms")
                 plot_map(map,paparazi.path)
-                result = PathFindingResult(map, str(heuristic), paparazi.path, 0, total_iteration, time_elapsed)
+                result = PathFindingResult(map, str(heuristic), paparazi.path, total_iteration, time_elapsed)
                 results.append(result)
         return results
         
