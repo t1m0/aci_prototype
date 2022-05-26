@@ -36,14 +36,14 @@ def plot_map(map:Map, path):
             else:
                 print(f"Weight {current_weight} not found!")
                 map_image[i][j] = [0,0,0]
-    for cell in path:
-        if cell != map.startpoint and cell != map.endpoint:
-            row, col = cell.get_pos()
-            map_image[row][col] = weight_to_color_map[-1]
     for security_guard in map.security_guards:
         for cell in security_guard.movement:
             row, col = cell.get_pos()
             map_image[row][col] = weight_to_color_map[4000]
+    for cell in path:
+        if cell != map.startpoint and cell != map.endpoint:
+            row, col = cell.get_pos()
+            map_image[row][col] = weight_to_color_map[-1]
     plt.figure(figsize = (10,10))
     plt.imshow(map_image)
     ax = plt.gca()
