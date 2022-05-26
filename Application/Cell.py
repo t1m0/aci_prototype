@@ -1,5 +1,4 @@
 class Cell:
-    cost = 0
     def __init__(self,col,row,value,total_rows):
         self.row = row
         self.col = col

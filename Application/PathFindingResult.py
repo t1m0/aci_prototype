@@ -1,13 +1,5 @@
 import uuid
 class PathFindingResult:
-    uuid = None
-    time_elapsed = None
-    total_iteration = None
-    total_cost = None
-    path_length = None
-    path = None
-    heuristic = None
-    map = None
     
     def __init__(self,map,heuristic,path,total_cost,total_iteration,time_elapsed):
         self.uuid = uuid.uuid1()

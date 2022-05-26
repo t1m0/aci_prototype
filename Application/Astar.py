@@ -53,21 +53,21 @@ def reconstruct_path(came_from, f_scores, current_cell):
     total_path.reverse()
     return total_path, total_cost
 
-def A_Star(map, heuristic):
+def A_Star(map, startpoint, heuristic):
     # The set of discovered nodes that may need to be (re-)expanded.
     # Initially, only the start node is known.
-    open_set = set([map.startpoint])
+    open_set = set([startpoint])
 
     # Stores the cell immediately preceding the given cell
     came_from = {}
 
     # Stores the cost of the cheapest path from start to the given cell
     g_score = {}
-    g_score[map.startpoint] = 0
+    g_score[startpoint] = 0
 
     # Stores the f-score for the given cell
     f_score = {}
-    f_score[map.startpoint] = heuristic_function(map.startpoint, map.startpoint, heuristic)
+    f_score[startpoint] = heuristic_function(startpoint, startpoint, heuristic)
     total_iterations = 0
     while len(open_set) > 0:
         # This operation can occur in O(Log(N)) time if openSet is a min-heap or a priority queue
@@ -80,7 +80,8 @@ def A_Star(map, heuristic):
         for neighbor in map.find_neighbors(current):
             # d(current,neighbor) is the weight of the edge from current to neighbor
             # tentative_gScore is the distance from start to the neighbor through current
-            tentative_gScore = g_score[current] + neighbor.weight
+            weight = map.get_weight(neighbor)
+            tentative_gScore = g_score[current] + weight
             if not neighbor in g_score.keys():
                 # This path to neighbor is better than any previous one. Record it!
                 came_from[neighbor] = current

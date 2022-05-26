@@ -7,6 +7,7 @@ weight_to_color_map = {
     -10 : [255,255,0], # start node
     -11 : [255,128,0], # end node
     3000 : [51,0,102], # obstacle
+    4000 : [255, 95, 31], # security_guard
     1 : [210,210,210], # house
     5 : [70,70,70], # road
     7 : [128,128,128], # gravel road
@@ -19,7 +20,7 @@ weight_to_color_map = {
     30 : [155, 19, 6], # camera center
     20 : [175, 22, 7], # camera center
     10 : [194, 24, 8], # camera center
-    100 : [0,128,0] # tree
+    100 : [0,128,0], # tree
 }
 
 '''create a 3d version of the original 2d map and colorize all the different elements in the map'''
@@ -39,6 +40,10 @@ def plot_map(map:Map, path):
         if cell != map.startpoint and cell != map.endpoint:
             row, col = cell.get_pos()
             map_image[row][col] = weight_to_color_map[-1]
+    for security_guard in map.security_guards:
+        for cell in security_guard.movement:
+            row, col = cell.get_pos()
+            map_image[row][col] = weight_to_color_map[4000]
     plt.figure(figsize = (10,10))
     plt.imshow(map_image)
     ax = plt.gca()
@@ -50,5 +55,4 @@ def plot_map(map:Map, path):
     ax.axes.xaxis.set_ticklabels([])
     ax.axes.yaxis.set_ticklabels([])
     ax.grid(color=[0.8,0.8,0.8], linestyle='-', linewidth=0.5)
-        
-    return map_image
+    plt.show()
