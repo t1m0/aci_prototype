@@ -20,24 +20,26 @@ class SecurityGuard:
             movement = randrange(3)
         else:
             movement = randrange(7)
-
+        new_cell = None
         if(movement == 0 and row+1 < map.size):
-            self.movement.append(map.get_cell(row+1,col))
+            new_cell = map.get_cell(row+1,col)
         if(movement == 1 and row-1 >= 0):
-            self.movement.append(map.get_cell(row-1,col))
+            new_cell = map.get_cell(row-1,col)
         if(movement == 2 and col+1 < map.size):
-            self.movement.append(map.get_cell(row,col+1))
+            new_cell = map.get_cell(row,col+1)
         if(movement == 3 and col-1 >= 0):
-            self.movement.append(map.get_cell(row,col-1))
+            new_cell = map.get_cell(row,col-1)
         if((movement == 4)and(row+1 < map.size) and (col+1 < map.size) and diagonal_movement):
-            self.movement.append(map.get_cell(row+1,col+1))
+            new_cell = map.get_cell(row+1,col+1)
         if((movement == 5)and(row-1 >= 0) and (col-1 >=0) and diagonal_movement):
-            self.movement.append(map.get_cell(row-1,col-1))
+            new_cell = map.get_cell(row-1,col-1)
         if((movement == 6)and(row+1 < map.size) and (col-1 >=0) and diagonal_movement):
-            self.movement.append(map.get_cell(row+1,col+1))
+            new_cell = map.get_cell(row+1,col+1)
         if((movement == 7)and(row-1 >= 0) and (col+1 < map.size) and diagonal_movement):
-            self.movement.append(map.get_cell(row-1,col+1))
-        return self.movement
+            new_cell = map.get_cell(row-1,col+1)
+
+        if new_cell != None and new_cell.weight != 3000:
+            self.movement.append(new_cell)
 
     def __get_random_number(self,max,exclude_start,exclude_end):
         random_number = None
