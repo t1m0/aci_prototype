@@ -40,6 +40,7 @@ class PaparaziGame:
                 plot_map(map,paparazi.path)
                 result = PathFindingResult(map, str(heuristic), paparazi.path, total_iteration, time_elapsed)
                 results.append(result)
+                map.place_security_guards()
         return results
         
     def __load_maps(self, map_root_dir, num_security_guards):
