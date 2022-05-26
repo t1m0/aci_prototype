@@ -12,7 +12,6 @@ import pandas as pd
 class PaparaziGame:
 
     heuristics = [None, "Manhattan", "Euclidean", "Chebyshev"]
-    heuristics = [None]
     
     def play(self, map_root_dir, num_security_guards=3):
         maps = self.__load_maps(map_root_dir, num_security_guards)
