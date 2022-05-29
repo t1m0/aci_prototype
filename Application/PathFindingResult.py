@@ -8,7 +8,7 @@ class PathFindingResult:
         self.path = path
         self.path_length = len(path)
         self.total_iteration = total_iteration
-        self.time_elapsed = time_elapsed/60000
+        self.time_elapsed = time_elapsed
         self.total_cost = 0
         for cell in path:
             self.total_cost += cell.weight

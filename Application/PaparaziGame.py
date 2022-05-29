@@ -19,24 +19,23 @@ class PaparaziGame:
         for map in maps:
             for heuristic in self.heuristics:
                 print(f"Started {map.name} with {heuristic} heuristic")
-                starttime = time.time()
+                start_time = time.time()
                 paparazi = Paparazi(map.startpoint)
                 total_iteration = 0
                 time_elapsed = 0
                 intermediate_info_count = 0
-                while(paparazi.get_current_cell() != map.endpoint):
+                while(self.__is_not_finished(paparazi,map)):
                     path, total_cost, iterations = A_Star(map, paparazi.get_current_cell(), heuristic)
                     next_cell = self.__find_next_move(paparazi.get_current_cell(), path)
                     paparazi.move(next_cell)
                     map.move_security_guards()
                     total_iteration += 1
-                    time_elapsed = 1000 * (time.time() - starttime)
-                    if ((time_elapsed / 60000) - intermediate_info_count*60000) > 15:
-                        print(f"Running longer than 15min currently at iteration {total_iteration}")
+                    time_elapsed = self.__time_elapsed(start_time)
+                    if (time_elapsed > 15) and (not self.__is_not_finished(paparazi,map)):
+                        print(f"Running longer than 15min currently at iteration {total_iteration} and {time_elapsed}min")
                         plot_map(map, paparazi.path)
                         intermediate_info_count += 1
-                time_elapsed = 1000 * (time.time() - starttime) # time in ms
-                print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {round(time_elapsed,2)}ms")
+                print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {time_elapsed}min")
                 plot_map(map,paparazi.path)
                 result = PathFindingResult(map, str(heuristic), paparazi.path, total_iteration, time_elapsed)
                 results.append(result)
@@ -59,6 +58,10 @@ class PaparaziGame:
         current_index += 1
         return path[current_index]
 
+    def __time_elapsed(self,start_time):
+        time_elapsed = 1000 * (time.time() - start_time) # time in ms
+        return round((time_elapsed/60000),2) # time in min    
     
-    
+    def __is_not_finished(self, paparazi:Paparazi, map:Map):
+        return paparazi.get_current_cell() != map.endpoint
     
