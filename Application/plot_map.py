@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 weight_to_color_map = {
     -1 : [255,153,255], # path
-    -10 : [255,255,0], # start node
-    -11 : [255,128,0], # end node
+    -10 : [255,153,255], # start node
+    -11 : [255,255,0], # end node
     3000 : [51,0,102], # obstacle
     4000 : [255, 95, 31], # security_guard
     1 : [210,210,210], # house
