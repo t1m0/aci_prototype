@@ -1,8 +1,8 @@
 import uuid
 class PathFindingResult:
     
-    def __init__(self,map,heuristic,path,total_iteration,time_elapsed):
-        self.uuid = uuid.uuid1()
+    def __init__(self,name,map,heuristic,path,total_iteration,time_elapsed):
+        self.name = name
         self.map = map
         self.heuristic = heuristic
         self.path = path

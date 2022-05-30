@@ -24,7 +24,7 @@ weight_to_color_map = {
 }
 
 '''create a 3d version of the original 2d map and colorize all the different elements in the map'''
-def plot_map(map:Map, path):
+def plot_map(map:Map, path, save_image=False, plot_name="", only_plot_current_position=False):
     testmap = map.map_data.to_numpy()
     height, width = testmap.shape
     map_image = np.zeros((height, width, 3), dtype=np.uint8)
@@ -36,10 +36,15 @@ def plot_map(map:Map, path):
             else:
                 print(f"Weight {current_weight} not found!")
                 map_image[i][j] = [0,0,0]
-    for security_guard in map.security_guards:
-        for cell in security_guard.movement:
-            row, col = cell.get_pos()
+    if only_plot_current_position:
+        for security_guard in map.security_guards:
+            row, col = security_guard.get_current_cell().get_pos()
             map_image[row][col] = weight_to_color_map[4000]
+    else:
+        for security_guard in map.security_guards:
+            for cell in security_guard.movement:
+                row, col = cell.get_pos()
+                map_image[row][col] = weight_to_color_map[4000]
     for cell in path:
         if cell != map.startpoint and cell != map.endpoint:
             row, col = cell.get_pos()
@@ -55,4 +60,8 @@ def plot_map(map:Map, path):
     ax.axes.xaxis.set_ticklabels([])
     ax.axes.yaxis.set_ticklabels([])
     ax.grid(color=[0.8,0.8,0.8], linestyle='-', linewidth=0.5)
-    plt.show()
+    if save_image:
+        plt.savefig("Visualization/"+plot_name)
+    else:
+        plt.show()
+    plt.close()

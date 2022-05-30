@@ -5,41 +5,50 @@ from Application.Astar import A_Star
 from Application.Paparazi import Paparazi
 from Application.PathFindingResult import PathFindingResult
 from Application.plot_map import plot_map
+from Application.generate_gif import generate_gifs
 import pathlib
 
 import pandas as pd
 
 class PaparaziGame:
 
-    heuristics = [None, "Manhattan", "Euclidean", "Chebyshev"]
+    #heuristics = [None, "Manhattan", "Euclidean", "Chebyshev"]
+    heuristics = [None] # for now we only use none heuristics
     
-    def play(self, map_root_dir, num_security_guards=3):
+    def play(self, map_root_dir, num_security_guards=1, iterations=1):
         maps = self.__load_maps(map_root_dir, num_security_guards)
         results = []
         for map in maps:
+            plot_map(map,[])
             for heuristic in self.heuristics:
                 print(f"Started {map.name} with {heuristic} heuristic")
-                start_time = time.time()
-                paparazi = Paparazi(map.startpoint)
-                total_iteration = 0
-                time_elapsed = 0
-                intermediate_info_count = 0
-                while(self.__is_not_finished(paparazi,map)):
-                    path, total_cost, iterations = A_Star(map, paparazi.get_current_cell(), heuristic)
-                    next_cell = self.__find_next_move(paparazi.get_current_cell(), path)
-                    paparazi.move(next_cell)
-                    map.move_security_guards()
-                    total_iteration += 1
-                    time_elapsed = self.__time_elapsed(start_time)
-                    if (time_elapsed > 15) and (not self.__is_not_finished(paparazi,map)):
-                        print(f"Running longer than 15min currently at iteration {total_iteration} and {time_elapsed}min")
-                        plot_map(map, paparazi.path)
-                        intermediate_info_count += 1
-                print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {time_elapsed}min")
-                plot_map(map,paparazi.path)
-                result = PathFindingResult(map, str(heuristic), paparazi.path, total_iteration, time_elapsed)
-                results.append(result)
-                map.place_security_guards()
+                for iteration in range(iterations):
+                    print(f"Iteration {iteration} of {iterations}")
+                    start_time = time.time()
+                    paparazi = Paparazi(map.startpoint)
+                    total_iteration = 0
+                    time_elapsed = 0
+                    intermediate_info_count = 0
+                    iteration_name = map.name + "_" + str(heuristic) + "_" + str(iteration)
+                    while(self.__is_not_finished(paparazi,map)):
+                        path, total_cost, a_star_iterations = A_Star(map, paparazi.get_current_cell(), heuristic)
+                        next_cell = self.__find_next_move(paparazi.get_current_cell(), path)
+                        paparazi.move(next_cell)
+                        map.move_security_guards()
+                        total_iteration += 1
+                        time_elapsed = self.__time_elapsed(start_time)
+                        plot_name = iteration_name + "_" + str(total_iteration) + ".png"
+                        plot_map(map, paparazi.path, save_image=True, plot_name=plot_name, only_plot_current_position=True)
+                        if (time_elapsed > 15) and (not self.__is_not_finished(paparazi,map)):
+                            print(f"Running longer than 15min currently at iteration {total_iteration} and {time_elapsed}min")
+                            plot_map(map, paparazi.path)
+                            intermediate_info_count += 1
+                    print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {time_elapsed}min")
+                    plot_map(map,paparazi.path)
+                    result = PathFindingResult(iteration_name, map, str(heuristic), paparazi.path, total_iteration, time_elapsed)
+                    results.append(result)
+                    map.place_security_guards()
+                    generate_gifs([iteration_name])
         return results
         
     def __load_maps(self, map_root_dir, num_security_guards):
