@@ -19,7 +19,7 @@ class PaparaziGame:
         maps = self.__load_maps(map_root_dir, num_security_guards)
         results = []
         for map in maps:
-            plot_map(map,[])
+            plot_map(map,[],only_plot_current_position=True)
             for heuristic in self.heuristics:
                 print(f"Started {map.name} with {heuristic} heuristic")
                 for iteration in range(iterations):
@@ -59,7 +59,11 @@ class PaparaziGame:
             map_data = pd.read_csv(file, header=None)
             map_name = pure_path.name.replace(".csv","")
             print(map_name)
-            maps.append(Map(map_name, map_data,num_security_guards))
+            map = Map(map_name, map_data,num_security_guards)
+            if map.size == 200:
+                print("Skipping map of size 200!")
+            else:
+                maps.append(map)
         return maps
     
     def __find_next_move(self,current, path):
