@@ -77,7 +77,7 @@ def A_Star(map, startpoint, heuristic):
             return path, total_cost, total_iterations
 
         open_set.remove(current)
-        for neighbor in map.find_neighbors(current):
+        for neighbor in map.find_neighbors_in_radius(current):
             # d(current,neighbor) is the weight of the edge from current to neighbor
             # tentative_gScore is the distance from start to the neighbor through current
             weight = map.get_weight(neighbor)

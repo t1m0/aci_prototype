@@ -41,28 +41,6 @@ class Map:
         for security_guard in self.security_guards:
             security_guard.move(self, diagonal_movement)
         self.__store_weights_for_security_guards()
-
-    def find_neighbors(self, current_cell, diagonal_movement=False):
-        row,col = current_cell.get_pos()
-        neighbors = []
-        if(row+1 < self.size):
-            neighbors.append(self.get_cell(row+1,col))
-        if(row-1 >= 0):
-            neighbors.append(self.get_cell(row-1,col))
-        if(col+1 < self.size):
-            neighbors.append(self.get_cell(row,col+1))
-        if(col-1 >= 0):
-            neighbors.append(self.get_cell(row,col-1))
-        if diagonal_movement:
-            if((row+1 < self.size) and (col+1 < self.size)):
-                neighbors.append(self.get_cell(row+1,col+1))
-            if((row-1 >= 0) and (col-1 >=0)):
-                neighbors.append(self.get_cell(row-1,col-1))
-            if((row+1 < self.size) and (col-1 >=0)):
-                neighbors.append(self.get_cell(row+1,col-1))
-            if((row-1 >= 0) and (col+1 < self.size)):
-                neighbors.append(self.get_cell(row-1,col+1))
-        return neighbors
     
     def find_neighbors_in_radius(self, current_cell, radius=1):
         row,col = current_cell.get_pos()
