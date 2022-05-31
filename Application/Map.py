@@ -1,4 +1,5 @@
 
+import re
 from Application.Cell import Cell
 from Application.SecurityGuard import SecurityGuard
 
@@ -34,10 +35,12 @@ class Map:
         self.security_guards.clear()
         for i in range(self.num_security_guards):
             self.security_guards.append(SecurityGuard(self))
+        self.__store_weights_for_security_guards()
 
     def move_security_guards(self,diagonal_movement=False):
         for security_guard in self.security_guards:
             security_guard.move(self, diagonal_movement)
+        self.__store_weights_for_security_guards()
 
     def find_neighbors(self, current_cell, diagonal_movement=False):
         row,col = current_cell.get_pos()
@@ -50,24 +53,82 @@ class Map:
             neighbors.append(self.get_cell(row,col+1))
         if(col-1 >= 0):
             neighbors.append(self.get_cell(row,col-1))
-        if((row+1 < self.size) and (col+1 < self.size) and diagonal_movement):
-            neighbors.append(self.get_cell(row+1,col+1))
-        if((row-1 >= 0) and (col-1 >=0) and diagonal_movement):
-            neighbors.append(self.get_cell(row-1,col-1))
-        if((row+1 < self.size) and (col-1 >=0) and diagonal_movement):
-            neighbors.append(self.get_cell(row+1,col+1))
-        if((row-1 >= 0) and (col+1 < self.size) and diagonal_movement):
-            neighbors.append(self.get_cell(row-1,col+1))
+        if diagonal_movement:
+            if((row+1 < self.size) and (col+1 < self.size)):
+                neighbors.append(self.get_cell(row+1,col+1))
+            if((row-1 >= 0) and (col-1 >=0)):
+                neighbors.append(self.get_cell(row-1,col-1))
+            if((row+1 < self.size) and (col-1 >=0)):
+                neighbors.append(self.get_cell(row+1,col-1))
+            if((row-1 >= 0) and (col+1 < self.size)):
+                neighbors.append(self.get_cell(row-1,col+1))
         return neighbors
+    
+    def find_neighbors_in_radius(self, current_cell, radius=1):
+        row,col = current_cell.get_pos()
+        
+        lower_row = self.__find_lowest(row,radius)
+        lower_col = self.__find_lowest(col,radius)
+        higher_row = self.__find_highest(row,radius)
+        higher_col = self.__find_highest(col,radius)
+
+        left_side = self.__walk_vertical_line(lower_col,higher_col,lower_row) 
+        right_side = self.__walk_vertical_line(lower_col,higher_col,higher_row) 
+        top_side = self.__walk_horizontal_line(lower_row,higher_row,higher_col)
+        lower_side = self.__walk_horizontal_line(lower_row,higher_row,lower_col)
+
+        neighbors = left_side + right_side + top_side + lower_side
+        return neighbors
+
+        
+    def __find_lowest(self,current,radius):
+        if current-radius > 0:
+            return current-radius
+        else:
+            return 0
+    
+    def __find_highest(self,current,radius):
+        if current+radius < self.size:
+            return current+radius
+        else:
+            return self.size-1
+
+    def __walk_vertical_line(self,start,end,stable):
+        cells = []
+        for i in range(start,end+1):
+            cells.append(self.get_cell(stable,i))
+        return cells
+
+    def __walk_horizontal_line(self,start,end,stable):
+        cells = []
+        for i in range(start,end+1):
+            cells.append(self.get_cell(i,stable))
+        return cells
 
     def get_weight(self, in_cell):
         row, col = in_cell.get_pos()
         cell = self.cells[col][row]
-        for security_guard in self.security_guards:
-            if security_guard.get_current_cell() == cell:
-                return 3000
+        if cell in self.security_guard_weights.keys():
+            return self.security_guard_weights[cell]
         return cell.weight
 
     def get_cell(self, row, col):
-        cell = self.cells[col][row]
-        return cell
+        try: 
+            cell = self.cells[col][row]
+            return cell
+        except IndexError:
+            print(f"Failed to lookup {col} | {row}")
+            return None
+
+    def __store_weights_for_security_guards(self):
+        self.security_guard_weights = {}
+        for security_guard in self.security_guards:
+            sec_cell = security_guard.get_current_cell()
+            self.security_guard_weights[sec_cell] = 4000
+            self.__store_security_guard_neighbor_weights(sec_cell, radius=1, weight=3900)
+            self.__store_security_guard_neighbor_weights(sec_cell, radius=2,weight=3800)
+    
+    def __store_security_guard_neighbor_weights(self,sec_cell,radius,weight):
+        for neighbor in self.find_neighbors_in_radius(sec_cell, radius=radius):
+                if not neighbor in self.security_guard_weights.keys():
+                    self.security_guard_weights[neighbor] = weight

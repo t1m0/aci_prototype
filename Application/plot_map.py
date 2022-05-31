@@ -8,6 +8,9 @@ weight_to_color_map = {
     -11 : [255,255,0], # end node
     3000 : [51,0,102], # obstacle
     4000 : [255, 95, 31], # security_guard
+    3900 : [255, 151, 84], # close radius to to security guard
+    3800 : [255, 208, 137], # medium radius to security_guard
+    3700 : [255, 255, 192], # furthest radius to security_guard
     1 : [210,210,210], # house
     5 : [70,70,70], # road
     7 : [128,128,128], # gravel road
@@ -16,10 +19,10 @@ weight_to_color_map = {
     25 : [0,0,255], # water shallow
     35 : [0,0,128],  # water deep
     50 : [116, 14, 5], # camera center
-    40 : [136, 17, 6], # camera center
-    30 : [155, 19, 6], # camera center
-    20 : [175, 22, 7], # camera center
-    10 : [194, 24, 8], # camera center
+    40 : [136, 17, 6], # close radius to camera center
+    30 : [155, 19, 6], # medium radius to camera center
+    20 : [175, 22, 7], # further radius to camera center
+    10 : [194, 24, 8], # furthest radius to camera center
     100 : [0,128,0], # tree
 }
 
@@ -37,9 +40,9 @@ def plot_map(map:Map, path, save_image=False, plot_name="", only_plot_current_po
                 print(f"Weight {current_weight} not found!")
                 map_image[i][j] = [0,0,0]
     if only_plot_current_position:
-        for security_guard in map.security_guards:
-            row, col = security_guard.get_current_cell().get_pos()
-            map_image[row][col] = weight_to_color_map[4000]
+        for cell,weight in map.security_guard_weights.items():
+            row, col = cell.get_pos()
+            map_image[row][col] = weight_to_color_map[weight]
     else:
         for security_guard in map.security_guards:
             for cell in security_guard.movement:
