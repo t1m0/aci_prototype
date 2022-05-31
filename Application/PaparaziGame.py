@@ -45,7 +45,7 @@ class PaparaziGame:
                             intermediate_info_count += 1
                     print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {time_elapsed}min")
                     plot_map(map,paparazi.path)
-                    result = PathFindingResult(iteration_name, map, str(heuristic), paparazi.path, total_iteration, time_elapsed)
+                    result = PathFindingResult(iteration_name, map.name, str(heuristic), paparazi.path, total_iteration, time_elapsed)
                     results.append(result)
                     map.place_security_guards()
                     generate_gifs([iteration_name])
