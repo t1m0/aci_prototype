@@ -14,8 +14,8 @@ class PaparaziGame:
 
     heuristics = [None, "Manhattan", "Euclidean", "Chebyshev"]
     
-    def play(self, map_root_dir, num_security_guards=1, iterations=1):
-        maps = self.__load_maps(map_root_dir, num_security_guards)
+    def play(self, map_root_dir, num_security_guards=1, iterations=1, selected_map_sizes=[],selected_heuristics=[]):
+        maps = self.__load_maps(map_root_dir, num_security_guards, selected_map_sizes)
         results = []
         for map in maps:
             plot_map(map,[],only_plot_current_position=True)
@@ -50,7 +50,7 @@ class PaparaziGame:
                     generate_gifs([iteration_name])
         return results
         
-    def __load_maps(self, map_root_dir, num_security_guards):
+    def __load_maps(self, map_root_dir, num_security_guards, selected_map_sizes):
         maps = []
         files = [f for f in glob.glob(map_root_dir+"**/*.csv", recursive=True)]
         for file in files:
@@ -59,10 +59,12 @@ class PaparaziGame:
             map_name = pure_path.name.replace(".csv","")
             print(map_name)
             map = Map(map_name, map_data,num_security_guards)
-            if map.size == 200:
-                print("Skipping map of size 200!")
-            else:
+            if not selected_map_sizes:
                 maps.append(map)
+            elif map.size in selected_map_sizes:
+                maps.append(map)
+            else:
+                print(f"Skipping map of size {map.size}")
         return maps
     
     def __find_next_move(self,current, path):
