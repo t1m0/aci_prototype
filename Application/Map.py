@@ -58,6 +58,16 @@ class Map:
         neighbors = left_side + right_side + top_side + lower_side
         return neighbors
 
+    def security_guard_in_close_proximity(self,cell):
+        one_cell_radius = self.find_neighbors_in_radius(cell,radius=1)
+        two_cell_radius = self.find_neighbors_in_radius(cell,radius=2)
+        three_cell_radius = self.find_neighbors_in_radius(cell,radius=3)
+        four_cell_radius = self.find_neighbors_in_radius(cell,radius=4)
+        relevant_cells = one_cell_radius+two_cell_radius+three_cell_radius+four_cell_radius
+        for relevant_cell in relevant_cells:
+            if relevant_cell in self.security_guard_weights.keys() and self.security_guard_weights[relevant_cell] == 4000:
+                return True
+        return False
         
     def __find_lowest(self,current,radius):
         if current-radius > 0:

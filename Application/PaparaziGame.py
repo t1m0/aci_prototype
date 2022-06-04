@@ -28,23 +28,20 @@ class PaparaziGame:
                     total_iteration = 0
                     time_elapsed = 0
                     intermediate_info_count = 0
-                    iteration_name = map.name + "_" + str(heuristic) + "_" + str(iteration)
+                    iteration_name = time.strftime("%d%m%Y")+"_"+map.name + "_" + str(heuristic) + "_" + str(iteration)
+                    path = []
+                    a_star_executions = 0
                     while(self.__is_not_finished(paparazi,map)):
-                        path, total_cost, a_star_iterations = A_Star(map, paparazi.get_current_cell(), heuristic)
+                        path, a_star_executions = self.__update_path_if_required(paparazi,map,heuristic,path,a_star_executions)
                         next_cell = self.__find_next_move(paparazi.get_current_cell(), path)
                         paparazi.move(next_cell)
                         map.move_security_guards()
                         total_iteration += 1
                         time_elapsed = self.__time_elapsed(start_time)
-                        plot_name = iteration_name + "_" + str(total_iteration) + ".png"
-                        plot_map(map, paparazi.path, save_image=True, plot_name=plot_name, only_plot_current_position=True)
-                        if (time_elapsed > 15) and (not self.__is_not_finished(paparazi,map)):
-                            print(f"Running longer than 15min currently at iteration {total_iteration} and {time_elapsed}min")
-                            plot_map(map, paparazi.path)
-                            intermediate_info_count += 1
-                    print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {time_elapsed}min")
+                        intermediate_info_count = self.__plot_current_state(map, paparazi, iteration_name, time_elapsed, total_iteration, intermediate_info_count)
+                    print(f"Finished {map.name} with {heuristic} heuristic in {total_iteration} iterations and {time_elapsed}min with {a_star_executions} A* executions")
                     plot_map(map,paparazi.path)
-                    result = PathFindingResult(iteration_name, map.name, str(heuristic), paparazi.path, total_iteration, time_elapsed)
+                    result = PathFindingResult(iteration_name, map.name, str(heuristic), paparazi.path, a_star_executions, total_iteration, time_elapsed)
                     results.append(result)
                     map.place_security_guards()
                     generate_gifs([iteration_name])
@@ -67,6 +64,13 @@ class PaparaziGame:
                 print(f"Skipping map of size {map.size}")
         return maps
     
+    def __update_path_if_required(self,paparazi, map, heuristic, path, a_star_executions):
+        if not path or map.security_guard_in_close_proximity(paparazi.get_current_cell()):
+            path, total_cost, a_star_iterations = A_Star(map, paparazi.get_current_cell(), heuristic)
+            a_star_executions += 1
+        return path, a_star_executions
+
+
     def __find_next_move(self,current, path):
         current_index = path.index(current)
         current_index += 1
@@ -79,3 +83,11 @@ class PaparaziGame:
     def __is_not_finished(self, paparazi:Paparazi, map:Map):
         return paparazi.get_current_cell() != map.endpoint
     
+    def __plot_current_state(self, map, paparazi, iteration_name, time_elapsed, total_iteration, intermediate_info_count):
+        plot_name = iteration_name + "_" + str(total_iteration) + ".png"
+        plot_map(map, paparazi.path, save_image=True, plot_name=plot_name, only_plot_current_position=True)
+        if (time_elapsed > 15) and (not self.__is_not_finished(paparazi,map)):
+            print(f"Running longer than 15min currently at iteration {total_iteration} and {time_elapsed}min")
+            plot_map(map, paparazi.path)
+            intermediate_info_count += 1
+        return intermediate_info_count
