@@ -14,7 +14,7 @@ class PaparaziGame:
 
     heuristics = [None, "Manhattan", "Euclidean", "Chebyshev"]
     
-    def play(self, map_root_dir, num_security_guards=1, iterations=1, selected_map_sizes=[],selected_heuristics=[]):
+    def play(self, map_root_dir, num_security_guards=1, iterations=1, selected_map_sizes=[],selected_heuristics=[],smart_path_finding=True):
         maps = self.__load_maps(map_root_dir, num_security_guards, selected_map_sizes)
         results = []
         for map in maps:
@@ -32,7 +32,7 @@ class PaparaziGame:
                     path = []
                     a_star_executions = 0
                     while(self.__is_not_finished(paparazi,map)):
-                        path, a_star_executions = self.__update_path_if_required(paparazi,map,heuristic,path,a_star_executions)
+                        path, a_star_executions = self.__update_path_if_required(paparazi,map,heuristic,path,a_star_executions,smart_path_finding)
                         next_cell = self.__find_next_move(paparazi.get_current_cell(), path)
                         paparazi.move(next_cell)
                         map.move_security_guards()
@@ -64,8 +64,8 @@ class PaparaziGame:
                 print(f"Skipping map of size {map.size}")
         return maps
     
-    def __update_path_if_required(self,paparazi, map, heuristic, path, a_star_executions):
-        if not path or map.security_guard_in_close_proximity(paparazi.get_current_cell()):
+    def __update_path_if_required(self,paparazi, map, heuristic, path, a_star_executions, smart_path_finding):
+        if not path or map.security_guard_in_close_proximity(paparazi.get_current_cell()) or not smart_path_finding:
             path, total_cost, a_star_iterations = A_Star(map, paparazi.get_current_cell(), heuristic)
             a_star_executions += 1
         return path, a_star_executions
