@@ -57,6 +57,19 @@ class Map:
 
         neighbors = left_side + right_side + top_side + lower_side
         return neighbors
+    
+    def find_neighbors(self, current_cell):
+        row,col = current_cell.get_pos()
+        neighbors = []
+        if(row+1 < self.size):
+            neighbors.append(self.get_cell(row+1,col))
+        if(row-1 >= 0):
+            neighbors.append(self.get_cell(row-1,col))
+        if(col+1 < self.size):
+            neighbors.append(self.get_cell(row,col+1))
+        if(col-1 >= 0):
+            neighbors.append(self.get_cell(row,col-1))
+        return neighbors
 
     def security_guard_in_close_proximity(self,cell):
         one_cell_radius = self.find_neighbors_in_radius(cell,radius=1)

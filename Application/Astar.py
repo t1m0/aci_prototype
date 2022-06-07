@@ -53,7 +53,7 @@ def reconstruct_path(came_from, f_scores, current_cell):
     total_path.reverse()
     return total_path, total_cost
 
-def A_Star(map, startpoint, heuristic):
+def A_Star(map, startpoint, heuristic,diagonal_movement):
     # The set of discovered nodes that may need to be (re-)expanded.
     # Initially, only the start node is known.
     open_set = set([startpoint])
@@ -77,7 +77,11 @@ def A_Star(map, startpoint, heuristic):
             return path, total_cost, total_iterations
 
         open_set.remove(current)
-        for neighbor in map.find_neighbors_in_radius(current):
+        if diagonal_movement:
+            neighbors = map.find_neighbors_in_radius(current)
+        else:
+            neighbors = map.find_neighbors(current)
+        for neighbor in neighbors:
             # d(current,neighbor) is the weight of the edge from current to neighbor
             # tentative_gScore is the distance from start to the neighbor through current
             weight = map.get_weight(neighbor)
