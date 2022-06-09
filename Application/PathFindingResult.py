@@ -1,7 +1,7 @@
 import uuid
 class PathFindingResult:
     
-    def __init__(self,name,map,heuristic,path,a_star_executions,total_iteration,time_elapsed,diagonal_movement):
+    def __init__(self,name,map,heuristic,path,a_star_executions,total_iteration,time_elapsed,diagonal_movement,num_security_guards,smart_path_finding):
         self.name = name
         self.map = map
         self.heuristic = heuristic
@@ -12,5 +12,7 @@ class PathFindingResult:
         self.time_elapsed = time_elapsed
         self.total_cost = 0
         self.diagonal_movement = diagonal_movement
+        self.num_security_guards = num_security_guards
+        self.smart_path_finding = smart_path_finding
         for cell in path:
             self.total_cost += cell.weight

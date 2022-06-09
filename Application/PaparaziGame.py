@@ -46,7 +46,7 @@ class PaparaziGame:
                             intermediate_info_count = self.__plot_current_state(map, paparazi, iteration_name, time_elapsed, total_iteration, intermediate_info_count)
                         print(f"Finished {map.name} ({diagonal_label}) with {heuristic} heuristic in {total_iteration} iterations and {time_elapsed}min with {a_star_executions} A* executions")
                         plot_map(map,paparazi.path)
-                        result = PathFindingResult(iteration_name, map.name, str(heuristic), paparazi.path, a_star_executions, total_iteration, time_elapsed, diagonal_movement)
+                        result = PathFindingResult(iteration_name, map.name, str(heuristic), paparazi.path, a_star_executions, total_iteration, time_elapsed, diagonal_movement, num_security_guards, smart_path_finding)
                         results.append(result)
                         map.place_security_guards()
                         generate_gifs([iteration_name])
